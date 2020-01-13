@@ -1,0 +1,5 @@
+let
+    Source = OData.Feed("https://services.odata.org/V3/Northwind/Northwind.svc/", null, [Implementation="2.0"]),
+    Orders_table = Source{[Name="Orders",Signature="table"]}[Data]
+in
+    Orders_table
