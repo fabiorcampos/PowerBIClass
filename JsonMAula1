@@ -1,0 +1,7 @@
+let
+    Source = Json.Document(File.Contents("C:\Users\Spock\Downloads\20200113062627.json")),
+    valuesMap = Source[valuesMap],
+    #"Converted to Table" = Record.ToTable(valuesMap),
+    #"Expanded Value" = Table.ExpandRecordColumn(#"Converted to Table", "Value", {"Brasil - 1970", "Brasil - 1980", "Brasil - 1991", "Brasil - 2000", "Brasil - 2010"}, {"Value.Brasil - 1970", "Value.Brasil - 1980", "Value.Brasil - 1991", "Value.Brasil - 2000", "Value.Brasil - 2010"})
+in
+    #"Expanded Value"
