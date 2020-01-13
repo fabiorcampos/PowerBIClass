@@ -1,0 +1,5 @@
+let
+    Source = Folder.Files("C:\Users\Spock\Downloads\csvpetroleo"),
+    #"Removed Bottom Rows" = Table.RemoveLastN(Source,3)
+in
+    #"Removed Bottom Rows"
