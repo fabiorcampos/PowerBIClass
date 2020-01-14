@@ -1,0 +1,13 @@
+let
+    Source = Folder.Files("C:\Users\Spock\Downloads\csvpetroleo"),
+    #"Removed Bottom Rows" = Table.RemoveLastN(Source,3),
+    #"C:\Users\Spock\Downloads\csvpetroleo\_importacao-derivados-2000-2018-b csv1" = #"Removed Bottom Rows"{[#"Folder Path"="C:\Users\Spock\Downloads\csvpetroleo\",Name="importacao-derivados-2000-2018-b.csv"]}[Content],
+    #"Imported CSV" = Csv.Document(#"C:\Users\Spock\Downloads\csvpetroleo\_importacao-derivados-2000-2018-b csv1",[Delimiter=";", Columns=17, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(#"Imported CSV", [PromoteAllScalars=true]),
+    #"Removed Columns" = Table.RemoveColumns(#"Promoted Headers",{"MOVIMENTO COMERCIAL", "UNIDADE"}),
+    #"Lowercased Text" = Table.TransformColumns(#"Removed Columns",{{"PRODUTO", Text.Lower, type text}}),
+    #"Replaced Value" = Table.ReplaceValue(#"Lowercased Text"," (b)","",Replacer.ReplaceText,{"PRODUTO"}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Replaced Value",{{"JAN", type number}, {"FEV", type number}, {"MAR", type number}, {"ABR", type number}, {"MAI", type number}, {"JUN", type number}, {"JUL", type number}, {"AGO", type number}, {"SET", type number}, {"OUT", type number}, {"NOV", type number}, {"DEZ", type number}, {"TOTAL", type number}}),
+    #"Rounded Off" = Table.TransformColumns(#"Changed Type",{{"JAN", each Number.Round(_, 2), type number}, {"FEV", each Number.Round(_, 2), type number}, {"MAR", each Number.Round(_, 2), type number}, {"ABR", each Number.Round(_, 2), type number}, {"MAI", each Number.Round(_, 2), type number}, {"JUN", each Number.Round(_, 2), type number}, {"JUL", each Number.Round(_, 2), type number}, {"AGO", each Number.Round(_, 2), type number}, {"SET", each Number.Round(_, 2), type number}, {"OUT", each Number.Round(_, 2), type number}, {"NOV", each Number.Round(_, 2), type number}, {"DEZ", each Number.Round(_, 2), type number}, {"TOTAL", each Number.Round(_, 2), type number}})
+in
+    #"Rounded Off"
