@@ -1,0 +1,11 @@
+let
+    Source = OData.Feed("https://services.odata.org/V3/Northwind/Northwind.svc/", null, [Implementation="2.0"]),
+    Orders_table = Source{[Name="Orders",Signature="table"]}[Data],
+    #"Expanded Order_Details" = Table.ExpandTableColumn(Orders_table, "Order_Details", {"ProductID", "UnitPrice", "Quantity"}, {"Order_Details.ProductID", "Order_Details.UnitPrice", "Order_Details.Quantity"}),
+    #"Added Custom" = Table.AddColumn(#"Expanded Order_Details", "LineTotal", each [Order_Details.UnitPrice] * [Order_Details.Quantity]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"LineTotal", Currency.Type}}),
+    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"OrderDate", "ShipCity", "ShipCountry", "Order_Details.ProductID", "Order_Details.UnitPrice", "Order_Details.Quantity", "LineTotal"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Removed Other Columns",{{"Order_Details.ProductID", "ProductID"}, {"Order_Details.UnitPrice", "UnitPrice"}, {"Order_Details.Quantity", "Quantity"}}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"OrderDate", "ShipCity", "ShipCountry", "LineTotal", "ProductID", "UnitPrice", "Quantity"})
+in
+    #"Reordered Columns"
