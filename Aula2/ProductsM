@@ -1,0 +1,7 @@
+let
+    Source = Excel.Workbook(File.Contents("C:\Users\Spock\Downloads\excel\Products.xlsx"), null, true),
+    Products_Table = Source{[Item="Products",Kind="Table"]}[Data],
+    #"Changed Type" = Table.TransformColumnTypes(Products_Table,{{"ProductID", Int64.Type}, {"ProductName", type text}, {"SupplierID", Int64.Type}, {"CategoryID", Int64.Type}, {"QuantityPerUnit", type text}, {"UnitPrice", type number}, {"UnitsInStock", Int64.Type}, {"UnitsOnOrder", Int64.Type}, {"ReorderLevel", Int64.Type}, {"Discontinued", type logical}}),
+    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"ProductID", "ProductName", "QuantityPerUnit", "UnitsInStock"})
+in
+    #"Removed Other Columns"
