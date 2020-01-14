@@ -1,0 +1,13 @@
+let
+    Source = Csv.Document(File.Contents("C:\Users\Spock\Downloads\20200113062608.csv"),[Delimiter=";", Columns=13, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"População residente", type text}, {"", Int64.Type}, {"_1", type text}, {"_2", type text}, {"_3", type text}, {"_4", type text}, {"_5", type text}, {"_6", type text}, {"_7", type text}, {"_8", type text}, {"_9", type text}, {"_10", type text}, {"_11", type text}}),
+    #"Removed Bottom Rows" = Table.RemoveLastN(#"Changed Type",2),
+    #"Renamed Columns" = Table.RenameColumns(#"Removed Bottom Rows",{{"", "1872"}, {"_1", "1890 até 1890"}, {"_2", "1900"}, {"_3", "1920"}, {"_4", "1940"}, {"_5", "1950"}, {"_6", "1960"}, {"_7", "1970"}, {"_8", "1980"}, {"_9", "1991"}, {"_10", "2000"}, {"_11", "2010"}}),
+    #"Removed Top Rows" = Table.Skip(#"Renamed Columns",1),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Top Rows",{{"1890 até 1890", Int64.Type}, {"1900", Int64.Type}, {"1920", Int64.Type}, {"1940", Int64.Type}, {"1950", Int64.Type}, {"1960", Int64.Type}, {"1970", Int64.Type}, {"1980", Int64.Type}, {"1991", Int64.Type}, {"2000", Int64.Type}, {"2010", Int64.Type}}),
+    #"Added Custom" = Table.AddColumn(#"Changed Type1", "MediaPopulacional", each [1872] + [1890 até 1890] + [1900] + [1920] + [1940] + [1950] + [1960] + [1970] + [1980] + [1991] + [2000] + [2010] / 12),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Total Populacional", each [1872] + [1890 até 1890] + [1900] + [1920] + [1940] + [1950] + [1960] + [1970] + [1980] + [1991] + [2000] + [2010]),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom1",{{"MediaPopulacional", Int64.Type}, {"Total Populacional", Int64.Type}})
+in
+    #"Changed Type2"
